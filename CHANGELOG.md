@@ -6,4 +6,8 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) princi
 
 ## [Unreleased]
 
-- Nothing.
+- Nothing
+
+## [0.1.0] - 2023-12-22
+
+- Initial release
