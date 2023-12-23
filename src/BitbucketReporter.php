@@ -14,12 +14,9 @@ class BitbucketReporter implements Report
 
     private BitbucketApiClient $apiClient;
 
-    private string $separator;
-
     public function __construct()
     {
         $this->apiClient = new BitbucketApiClient();
-        $this->separator = md5(self::class);
     }
 
     public function generateFileReport($report, File $phpcsFile, $showSources = false, $width = 80)
@@ -33,7 +30,7 @@ class BitbucketReporter implements Report
                         'line' => $line,
                     ];
 
-                    echo json_encode($issue, JSON_THROW_ON_ERROR).$this->separator;
+                    echo json_encode($issue, JSON_THROW_ON_ERROR).',';
                 }
             }
         }
@@ -52,19 +49,17 @@ class BitbucketReporter implements Report
         $interactive = false,
         $toScreen = true
     ) {
-        $annotations = array_map(
-            static fn ($issue) => json_decode($issue, false, 512, JSON_THROW_ON_ERROR),
-            array_filter(explode($this->separator, $cachedData))
-        );
+        /** @var list<array{summary: string, filePath: string, line: int}> $annotations */
+        $annotations = json_decode('['.rtrim($cachedData, ',').']', true, 512, JSON_THROW_ON_ERROR);
 
         $reportUuid = $this->apiClient->createReport(self::REPORT_TITLE, $totalErrors + $totalWarnings);
 
         foreach ($annotations as $annotation) {
             $this->apiClient->addAnnotation(
                 $reportUuid,
-                $annotation->summary,
-                $annotation->filePath,
-                $annotation->line
+                $annotation['summary'],
+                $annotation['filePath'],
+                $annotation['line']
             );
         }
     }
