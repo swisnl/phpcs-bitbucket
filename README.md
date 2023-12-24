@@ -54,7 +54,8 @@ Or using config:
 
 ## Screenshots
 
-TODO
+![Annotations](/img/annotations.png)
+![Report](/img/report.png)
 
 ## Changelog
 
